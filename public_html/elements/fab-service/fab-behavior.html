@@ -1,0 +1,56 @@
+<script>
+    var waitingList = [];
+    var pages = {};
+    var currentPage;
+    var FabBehavior = {
+        properties: {
+            fabContainer: Object
+        },
+        setFabContainer: function (container) {
+            this.fabContainer = container;
+            if (!this.fabContainer) {
+                console.error('<fab-service> element not found.');
+                return;
+            }
+            for (var i = 0; i < waitingList.length; i++) {
+//                this.addFab(waitingList[i].id, waitingList[i].icon, waitingList[i].onClick, waitingList[i].page);
+                this.addFab(waitingList[i]);
+            }
+            waitingList = [];
+        },
+        setCurrentPage: function (page) {
+            for (var i in pages[currentPage]) {
+                this.removeFab(pages[currentPage][i]['id']);
+            }
+            currentPage = page;
+            for (var i in pages[currentPage]) {
+//                this.addFab(pages[currentPage][i].id, pages[currentPage][i].icon, pages[currentPage][i].onClick, pages[currentPage][i].page);
+                this.addFab(pages[currentPage][i]);
+            }
+        },
+        addFab: function (fab) {
+            if (this.fabContainer) {
+                if (!fab.page || fab.page === currentPage) {
+                    this.fabContainer.addFab(fab);
+                }
+                if (!pages[fab.page]) {
+                    pages[fab.page] = [];
+                }
+                pages[fab.page].push(fab);
+            } else {
+                waitingList.push(fab);
+            }
+        },
+        removeFab: function (id) {
+            if (this.fabContainer) {
+                this.fabContainer.removeFab(id);
+            } else {
+                for (var i = waitingList.length - 1; i >= 0; i--) {
+                    if (waitingList[i].id === id) {
+                        waitingList.splice(i, 1);
+                    }
+                }
+            }
+        }
+    };
+</script>

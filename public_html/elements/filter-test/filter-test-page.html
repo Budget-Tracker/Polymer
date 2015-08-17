@@ -1,0 +1,293 @@
+<link rel="import" href="filter-test-filter.html">
+<link rel="import" href="filter-test-response.html">
+
+<dom-module id="filter-test-page">
+    <style is="custom-style">
+        h2.title {
+            margin-left: 16px;
+            margin-right: 16px;
+            margin-bottom: 0;
+        }
+    </style>
+    <template>
+        <iron-ajax
+            id="listAjax"
+            url="[[listAjaxUrl]]"
+            body="[[bodyPost]]"
+            headers="[[header]]"
+            method="GET"
+            last-response="{{response}}"></iron-ajax>
+        <iron-ajax
+            id="listAjaxPost"
+            url="[[listAjaxUrlPost]]"
+            body="[[bodyPost]]"
+            headers="[[header]]"
+            method="POST"
+            content-type="application/json"
+            last-response="{{responsePost}}"></iron-ajax>
+
+        <iron-ajax
+            id="listAjaxPut"
+            url="[[listAjaxUrlPut]]"
+            body="[[bodyPut]]"
+            headers="[[header]]"
+            method="PUT"
+            content-type="application/json"
+            last-response="{{responsePut}}"></iron-ajax>
+        <iron-ajax
+            id="listAjaxDelete"
+            url="[[listAjaxUrlDelete]]"
+            body="[[bodyDelete]]"
+            headers="[[header]]"
+            method="DELETE"
+            content-type="application/json"
+            last-response="{{responseDelete}}"></iron-ajax>
+
+        <my-app-title page="[[page]]" is-current="[[isCurrentPage]]">Összetett szűrés</my-app-title>
+        <fab-element id="refreshFab" icon="refresh" signal-name="refresh-filter-test" page="[[home]]"></fab-element>
+        <iron-signals on-iron-signal-refresh-filter-test="refresh"></iron-signals>
+
+        <h2 class="title">GET</h2>
+        <div class="layout horizontal">
+            <paper-material elevation="1" class="card flex-1">
+                <filter-test-filter filter="{{filter}}" valid="{{valid}}"></filter-test-filter>
+            </paper-material>
+
+            <paper-material elevation="1" class="card flex-2">
+                <filter-test-response response="[[response]]"></filter-test-response>
+            </paper-material>
+        </div>
+
+        <h2 class="title">POST</h2>
+        <div class="layout horizontal">
+            <paper-material elevation="1" class="card flex-1">
+                <filter-test-filter filter="{{filterPost}}" valid="{{validPost}}"></filter-test-filter>
+            </paper-material>
+
+            <paper-material elevation="1" class="card flex-2">
+                <filter-test-response response="[[responsePost]]"></filter-test-response>
+            </paper-material>
+        </div>
+
+        <h2 class="title">PUT</h2>
+        <div class="layout horizontal">
+            <paper-material elevation="1" class="card flex-1">
+                <filter-test-filter filter="{{filterPut}}" valid="{{validPut}}"></filter-test-filter>
+            </paper-material>
+
+            <paper-material elevation="1" class="card flex-2">
+                <filter-test-response response="[[responsePut]]"></filter-test-response>
+            </paper-material>
+        </div>
+
+        <h2 class="title">DELETE</h2>
+        <div class="layout horizontal">
+            <paper-material elevation="1" class="card flex-1">
+                <filter-test-filter filter="{{filterDelete}}" valid="{{validDelete}}"></filter-test-filter>
+            </paper-material>
+
+            <paper-material elevation="1" class="card flex-2">
+                <filter-test-response response="[[responseDelete]]"></filter-test-response>
+            </paper-material>
+        </div>
+
+    </template>
+</dom-module>
+<script>
+    (function () {
+        Polymer({
+            is: 'filter-test-page',
+            behaviors: [MyUtils],
+            properties: {
+//                isCurrent: {
+//                    type: Boolean,
+//                    observer: 'isCurrentChanged'
+//                },
+                page: {
+                    type: String
+                },
+                current: {
+                    type: String
+                },
+                isCurrentPage: {
+                    type: Boolean,
+                    computed: 'isCurrent(current)'
+                },
+                listAjaxUrl: {
+                    type: String
+                },
+                filter: {
+                    type: Object,
+                    value: {}
+                },
+                response: {
+                    type: Object,
+                    observer: 'responseChanged'
+                },
+                filterPost: {
+                    type: Object,
+                    value: {}
+                },
+                responsePost: {
+                    type: Object,
+                    observer: 'responsePostChanged'
+                },
+                bodyPost: {
+                    type: Object,
+                    value: {}
+                },
+                filterPut: {
+                    type: Object,
+                    value: {}
+                },
+                responsePut: {
+                    type: Object,
+                    value: {}
+                },
+                bodyPut: {
+                    type: Object,
+                    value: {}
+                },
+                filterDelete: {
+                    type: Object,
+                    value: {}
+                },
+                responseDelete: {
+                    type: Object,
+                    value: {}
+                },
+                bodyDelete: {
+                    type: Object,
+                    value: {}
+                },
+                header: {
+                    type: Object,
+                    value: {
+                        hello: 'world',
+                        hola: 'mundo'
+                    }
+                }
+            },
+            observers: [
+                'filterChanged(filter.name)',
+                'filterChanged(filter.number)',
+                'filterChanged(filter.dropdown)',
+                'filterChanged(filter.bools)',
+                'filterPostChanged(filterPost.name)',
+                'filterPostChanged(filterPost.number)',
+                'filterPostChanged(filterPost.dropdown)',
+                'filterPostChanged(filterPost.bools)',
+                'filterPutChanged(filterPut.name)',
+                'filterPutChanged(filterPut.number)',
+                'filterPutChanged(filterPut.dropdown)',
+                'filterPutChanged(filterPut.bools)',
+                'filterDeleteChanged(filterDelete.name)',
+                'filterDeleteChanged(filterDelete.number)',
+                'filterDeleteChanged(filterDelete.dropdown)',
+                'filterDeleteChanged(filterDelete.bools)'
+            ],
+            isCurrent: function(current) {
+                return current === this.page;
+            },
+            refresh: function () {
+                this.filterChanged();
+                this.filterPostChanged();
+                this.filterPutChanged();
+                this.filterDeleteChanged();
+            },
+            filterChanged: function () {
+                if (this.isCurrent && this.valid) {
+                    this.listAjaxUrl = this.listAjaxUrlCompute(this.filter);
+                    this.$.listAjax.generateRequest();
+                }
+            },
+            filterPostChanged: function (param) {
+                if (this.isCurrent && this.validPost) {
+                    this.listAjaxUrlPost = this.listAjaxUrlCompute();
+                    this.bodyPost = JSON.stringify(this.filterPost);
+                    this.$.listAjaxPost.generateRequest();
+                }
+            },
+            filterPutChanged: function (param) {
+                if (this.isCurrent && this.validPut) {
+                    this.listAjaxUrlPut = this.listAjaxUrlCompute();
+                    this.bodyPut = JSON.stringify(this.filterPut);
+                    this.$.listAjaxPut.generateRequest();
+                }
+            },
+            filterDeleteChanged: function (param) {
+                if (this.isCurrent && this.validDelete) {
+                    this.listAjaxUrlDelete = this.listAjaxUrlCompute();
+                    this.bodyDelete = JSON.stringify(this.filterDelete);
+                    this.$.listAjaxDelete.generateRequest();
+                }
+            },
+            listAjaxUrlCompute: function (filter) {
+                var d = new Date();
+                var dString =
+                        [d.getFullYear(), ((d.getMonth() < 9 ? '0' : '') + (d.getMonth() + 1)), d.getDate()].join('-')
+                        + '_' +
+                        [
+                            ((d.getHours() < 10 ? '0' : '') + d.getHours()),
+                            ((d.getMinutes() < 10 ? '0' : '') + d.getMinutes()),
+                            ((d.getSeconds() < 10 ? '0' : '') + d.getSeconds())
+                        ].join(':')
+                        + '.' +
+                        ((d.getMilliseconds() < 10 ? '0' : '') + d.getMilliseconds());
+
+                if (filter) {
+                    var paramString = this.listAjaxParamsCompute(filter);
+
+                    return'http://localhost:3005/param/' + dString + (paramString ? ('?' + paramString) : '');
+                } else {
+                    return'http://localhost:3005/param/' + dString;
+                }
+            },
+            listAjaxParamsCompute: function (filter) {
+//                var paramString = 'teszt=1&teszt=2&teszt=3';
+                var paramString = '';
+                if (filter.name) {
+                    if (paramString) {
+                        paramString += '&';
+                    }
+                    paramString += 'name=' + filter.name;
+                }
+                if (filter.number) {
+                    if (paramString) {
+                        paramString += '&';
+                    }
+                    paramString += 'number=' + filter.number;
+                }
+                if (filter.dropdown) {
+                    if (paramString) {
+                        paramString += '&';
+                    }
+                    paramString += 'dropdown=' + filter.dropdown;
+                }
+
+                if (paramString) {
+                    paramString += '&';
+                }
+                var boolParam = '';
+                for (var i in filter.bools) {
+                    var keys = MyUtils.JSON.getKeys(filter.bools[i]);
+                    for (var j in keys) {
+                        if (boolParam) {
+                            boolParam += '&';
+                        }
+                        boolParam += 'bools.' + keys[j] + '=' + MyUtils.JSON.getElement(filter, 'bools.' + i + '.' + keys[j]);
+                    }
+                }
+                paramString += boolParam;
+
+                return paramString;
+            },
+            responseChanged: function () {
+                this.set('resopnse', this.response);
+            },
+            responsePostChanged: function () {
+                this.set('resopnsePost', this.responsePost);
+            }
+        });
+    })();
+</script>

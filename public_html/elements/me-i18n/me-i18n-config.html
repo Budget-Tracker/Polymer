@@ -1,0 +1,38 @@
+<dom-module id="me-i18n-config">
+</dom-module>
+<script>
+    (function () {
+        Polymer({
+            is: 'me-i18n-config',
+            behaviors: [I18N],
+            properties: {
+                dirName: {
+                    type: String
+                },
+                baseFileName: {
+                    type: String
+                },
+                lang: {
+                    type: String,
+                    observer: 'changeLang'
+                },
+                isReady: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+            ready: function() {
+                var thiz = this;
+                I18N.config(this.dirName, this.baseFileName, this.lang, function() {
+                    thiz.set('lang', I18N.getLang());
+                    thiz.set('isReady', true);
+                });
+            },
+            changeLang: function(newVal, oldVal) {
+                console.log('change lang: ' + oldVal + ' -> ' + newVal);
+                I18N.setLang(newVal);
+                this.fire('iron-signal', {name: 'lang', data: newVal});
+            }
+        });
+    })();
+</script>

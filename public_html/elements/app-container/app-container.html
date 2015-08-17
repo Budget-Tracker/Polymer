@@ -1,0 +1,40 @@
+<dom-module id="app-container">
+    <style is="custom-style">
+        :host {
+            @apply(--layout-flex);
+            @apply(--layout-vertical);
+        }
+    </style>
+    <template>
+        <me-i18n-config dir-name="../../lang" base-file-name="texts" ></me-i18n-config>
+        <my-app id="app" hidden="[[!loggedIn]]"></my-app>
+        <login-page hidden="[[loggedIn]]" user="{{user}}"></login-page>
+    </template>
+</dom-module>
+<script>
+    (function () {
+        Polymer({
+            is: 'app-container',
+            properties: {
+                user: {
+                    type: Object,
+                    value: {}
+                },
+                loggedIn: {
+                    type: Boolean,
+                },
+                lang: {
+                    type: String,
+                    value: 'hu'
+                }
+            },
+            observers: ['tokenChanged(user.token)'],
+            tokenChanged: function(newVal, oldVal) {
+                this.set('loggedIn', !!newVal);
+            },
+            changeLang: function (lang) {
+                this.set('lang', lang);
+            }
+        });
+    })();
+</script>

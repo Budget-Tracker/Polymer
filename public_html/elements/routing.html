@@ -1,0 +1,58 @@
+<link rel="import" href="../bower_components/more-routing/more-routing.html">
+
+<more-routing-config driver="hash"></more-routing-config>
+
+<more-route name="login" path="/login"></more-route>
+<more-route name="home" path="/"></more-route>
+<more-route name="users" path="/users">
+    <more-route name="user-info" path="/:name"></more-route>
+</more-route>
+<more-route name="contact" path="/contact"></more-route>
+<more-route name="content-2" path="/content-2"></more-route>
+<more-route name="fruits" path="/fruits"></more-route>
+<more-route name="test" path="/test/:a/:b"></more-route>
+<more-route name="test2" path="/test/:a/valami/:b"></more-route>
+<more-route name="xy" path="/xy/:z">
+    <more-route name="xy-z" path="/blah"></more-route>
+</more-route>
+
+<!--
+<script src="../bower_components/page/page.js"></script>
+<script>
+    window.addEventListener('WebComponentsReady', function () {
+
+        // We use Page.js for routing. This is a Micro
+        // client-side router inspired by the Express router
+        // More info: https://visionmedia.github.io/page.js/
+        page('/', function () {
+            app.route = 'home';
+        });
+
+        page('/users', function () {
+            app.route = 'users';
+        });
+
+        page('/users/:name', function (data) {
+            app.route = 'user-info';
+            app.params = data.params;
+        });
+
+        page('/contact', function () {
+            app.route = 'contact';
+        });
+
+        page('/content-2', function () {
+            app.route = 'content-2';
+        });
+
+        page('/fruits', function () {
+            app.route = 'fruits';
+        });
+
+        // add #! before urls // if true
+        page({
+            hashbang: true
+        });
+
+    });
+</script>-->

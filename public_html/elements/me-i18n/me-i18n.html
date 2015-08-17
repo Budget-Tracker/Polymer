@@ -1,0 +1,48 @@
+<dom-module id="me-i18n">
+    <template>
+        <iron-signals on-iron-signal-lang="updateResult"></iron-signals>
+        <span>[[result]]</span>
+    </template>
+</dom-module>
+<script>
+    (function () {
+        Polymer({
+            is: 'me-i18n',
+            behaviors: [I18N],
+            properties: {
+                parameters: {
+                    type: Object,
+                    observer: 'updateResult'
+                },
+                result: {
+                    type: String
+                }
+            },
+            updateResult: function () {
+//                console.log('updateResult', Polymer.dom(this).textContent, this.parameters);
+                var result = I18N.translate(Polymer.dom(this).textContent, this.parameters);
+                this.set('result', result);
+            },
+            updateParameters: function () {
+                console.log('updateParameters', this.parameters);
+//                var parameters = this.parameters || {};
+//                var attributes = this.getAttribute('fp') ? this.getAttribute('fp').split(' ') : [];
+//                for (var i in attributes) {
+//                    var attr = attributes[i];
+//                    parameters[attr] = this.getAttribute(attr);
+//                    this.properties[attr] = {
+//                        type: String,
+//                        value: this.getAttribute(attr),
+//                        observer: 'updateResult'
+//                    };
+//                }
+//                this.set('parameters', parameters);
+            },
+            ready: function () {
+                this.updateParameters();
+                console.log('properties', this.properties);
+                this.updateResult();
+            }
+        });
+    })();
+</script>

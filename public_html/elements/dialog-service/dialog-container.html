@@ -1,0 +1,52 @@
+<dom-module id="dialog-container">
+    <style is="custom-style">
+        :host paper-dialog {
+            @apply(--card-background);
+        }
+        
+        /deep/ h3 {
+            margin-bottom: 12px !important;
+        }
+        
+        #spinnerDialog {
+            min-width: 250px;
+            max-width: 100%;
+            padding-top: 24px;
+            padding-bottom: 24px;
+        }
+        #spinnerDialog > * {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+        #spinnerDialog paper-spinner {
+            width: 34px;
+            height: 34px;
+            margin: auto;
+        }
+        #spinnerText {
+            line-height: 34px;
+            margin-left: 12px;
+        }
+    </style>
+    <template>
+        <paper-dialog id="spinnerDialog" modal>
+            <template is="dom-if" if="[[isText(spinnerDialogTitle)]]"><h3>[[spinnerDialogTitle]]</h3></template>
+            <div class="layout horizontal">
+                <paper-spinner active></paper-spinner>
+                <template is="dom-if" if="[[isText(spinnerDialogText)]]">
+                    <span id="spinnerText" class="flex">[[spinnerDialogText]]</span>
+                </template>
+            </div>
+        </paper-dialog>
+    </template>
+</dom-module>
+<script>
+    (function () {
+        Polymer({
+            is: 'dialog-container',
+            isText: function (text) {
+                return !!text && text.length > 0;
+            }
+        });
+    })();
+</script>

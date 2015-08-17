@@ -1,0 +1,137 @@
+<script>
+    var dir, baseFileName, configured;
+    var parametersPattern = /{{(.*?)}}/g;
+    var texts, defaultTexts, lang;
+
+    function getTextRecursive(key, texts) {
+        var keyParts = key.split('.');
+
+        if (keyParts.length > 1) {
+            if (texts[keyParts[0]]) {
+                return getTextRecursive(key.substring(keyParts[0].length + 1), texts[keyParts[0]]);
+            }
+        } else {
+            if (texts[keyParts[0]]) {
+                return texts[keyParts[0]];
+            }
+        }
+    }
+
+    function loadTexts(lang, callback) {
+        var files;
+        if (lang) {
+            var langs;
+//            lang = lang ? lang : (navigator.language || navigator.userLanguage);
+            if (lang.split('-').length > 1) {
+                langs = [lang, lang.split('-')[0]];
+            } else {
+                langs = [lang];
+            }
+
+            var files = [];
+            for (var i in langs) {
+                files.push(dir + '/' + baseFileName + '-' + langs[i] + '.json');
+            }
+            loadFiles(files, callback);
+        } else {
+            files = [dir + '/' + baseFileName + '.json'];
+            loadFiles(files, callback);
+        }
+    }
+
+    function loadFiles(files, callback) {
+        console.log('Load ' + files[0] + '.');
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function () {
+//            console.log(request.readyState, request.status);
+            if (request.readyState === 4 && request.status === 200) {
+                var res = JSON.parse(request.responseText);
+                if (callback) {
+                    callback(res);
+                }
+            } else if (request.readyState === 4 && (request.status === 404 || request.status === 0)) {
+                if (files.length > 1) {
+                    files.splice(0, 1);
+                    loadFiles(files, callback);
+                } else {
+                    if (callback) {
+                        console.warn('No lang file detected.');
+                        callback({});
+                    }
+                }
+            }
+        };
+        request.open('GET', files[0], true);
+        request.send();
+    }
+
+    I18N = {
+        config: function (_dir, _baseFileName, _lang, callback) {
+            if (!_dir || !_baseFileName) {
+                console.error('dir and base-file-name are required!');
+                configured = false;
+                return;
+            }
+            dir = _dir;
+            baseFileName = _baseFileName;
+            lang = _lang? _lang : (navigator.language || navigator.userLanguage);
+
+            loadTexts(lang, function (res) {
+                texts = res;
+                loadTexts(null, function (res) {
+                    defaultTexts = res;
+                    configured = true;
+                    var config = document.getElementsByTagName('me-i18n-config')[0];
+                    config.fire('iron-signal', {name: 'lang', data: _lang});
+                    if (callback) {
+                        callback();
+                    }
+                    console.log('Config kész.');
+                });
+            });
+        },
+        translate: function (key, parameters) {
+            if (parameters && typeof parameters === 'string') {
+                parameters = JSON.parse(parameters);
+            }
+
+            if (!configured) {
+                console.error('I18N is not configured!');
+                return ''; // key + (parameters ? (' ' + JSON.stringify(parameters)) : '');
+            }
+
+            var res = getTextRecursive(key, texts);
+
+            if (!res) {
+                res = getTextRecursive(key, defaultTexts);
+            }
+            if (!res) {
+                return key + (parameters ? (' ' + JSON.stringify(parameters)) : '');
+            }
+
+            if (parameters) {
+                var matches = res.match(parametersPattern);
+                for (var i in matches) {
+                    var p = matches[i];
+                    p = p.substring(2, p.length - 2); // {{...}}
+                    if (parameters[p]) {
+                        res = res.replace(matches[i], parameters[p]);
+                    }
+                }
+                return res;
+            } else {
+                return res;
+            }
+        },
+        getLang: function () {
+            return lang;
+        },
+        setLang: function (_lang) {
+            if (lang === _lang) {
+                return;
+            }
+            lang = _lang;
+            this.config(dir, baseFileName, _lang);
+        }
+    };
+</script>

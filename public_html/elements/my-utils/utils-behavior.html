@@ -1,0 +1,66 @@
+<script>
+    MyUtils = {
+        JSON: {
+            getElement: function (json, key) {
+                if (!json || !key) {
+                    return null;
+                }
+                if (typeof key !== typeof '') {
+                    console.error('The key must be a string!');
+                    console.error(key);
+                }
+                var key_strings = key.split('.');
+                if (key_strings.length === 1) {
+                    try {
+                        return json[key];
+                    } catch (e) {
+                        return json;
+                    }
+                } else {
+                    return MyUtils.JSON.getElement(json[key_strings[0]], key_strings.slice(1, key_strings.length).join('.'));
+                }
+            },
+            addElement: function (json, key, value) {
+                if (!json || !key) {
+                    return null;
+                }
+                if (typeof key !== typeof '') {
+                    console.error('The key must be a string!');
+                    console.error(key);
+                }
+
+                var key_strings = key.split('.');
+                if (key_strings.length === 1) {
+                    json[key] = value;
+                } else {
+                    MyUtils.JSON.addElement(json[key_strings[0]], key_strings.slice(1, key_strings.length).join('.'), value);
+                }
+            },
+            removeElement: function (json, key) {
+                if (!json || !key) {
+                    return null;
+                }
+                if (typeof key !== typeof '') {
+                    console.error('The key must be a string!');
+                    console.error(key);
+                }
+
+                var key_strings = key.split('.');
+                if (key_strings.length === 1) {
+                    delete json[key];
+                } else {
+                    MyUtils.JSON.removeElement(json[key_strings[0]], key_strings.slice(1, key_strings.length).join('.'));
+                }
+            },
+            getKeys: function (json) {
+                var keys = []
+                for (var name in json) {
+                    if (json.hasOwnProperty(name)) {
+                        keys.push(name);
+                    }
+                }
+                return keys;
+            }
+        }
+    };
+</script>
