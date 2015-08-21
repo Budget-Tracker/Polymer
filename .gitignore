@@ -3,3 +3,4 @@ dist
 bower_components
 .tmp
 /nbproject/private/
+!/public_html/bower_components/
