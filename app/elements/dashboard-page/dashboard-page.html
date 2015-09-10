@@ -5,138 +5,174 @@
             @apply(--layout-horizontal);
             @apply(--layout-center);
         }
+        
+        * {
+            --paper-checkbox-checked-color: var(--accent-color);
+            --paper-checkbox-checked-ink-color: var(--accent-color);
+            --paper-radio-button-checked-color: var(--accent-color);
+            --paper-radio-button-checked-ink-color: var(--accent-color);
+            --paper-toggle-button-checked-bar-color: var(--accent-color);
+            --paper-toggle-button-checked-button-color: var(--accent-color);
+            --paper-toggle-button-checked-ink-color: var(--accent-color);
+            --paper-input-container-focus-color: var(--accent-color);
+            --paper-slider-active-color: var(--accent-color);
+            --paper-slider-knob-color: var(--accent-color);
+            --paper-slider-pin-color: var(--accent-color);
+            --paper-fab-keyboard-focus-background: var(--accent-color);
+            --paper-tabs-selection-bar-color: var(--light-primary-color);
+            --paper-tab-ink: var(--light-primary-color);
+            --paper-tabs: {
+                background-color: var(--default-primary-color);
+                color: var(--text-primary-color);
+            }
+        }
     </style>
     <template>
         <iron-signals on-iron-signal-dashboard-add="onFabClicked"></iron-signals>
-        <div class="layout horizontal flex">
-            <div class="layout vertical flex">
-                <div class="layout horizontal">
-                    <h2>Költségvetés áttekintése</h2>
-                    <div class="flex"></div>
-                    <paper-button style="margin-left:0px; margin-top:10px;">Kiadások beírása</paper-button>
-                </div>
-                <mat-divider></mat-divider>
-                <paper-material heading="Egyenleg" class="card" style="margin-right:0px;">
-                    <h3>Egyenleg</h3>
-                    <div class="layout horizontal" style="margin:10px">
-                        <div class="layout vertical flex">
-                            <span>Tervezett egyenleg</span>
-                            <span>Tényleges egyenleg</span>
-                            <span>Különbség</span>
-                        </div>
-
-                        <div class="layout vertical flex">
-                            <span align="right">- Ft</span>
-                            <span align="right">- Ft</span>
-                            <span align="right">- Ft</span>
-                        </div>
-                    </div>
-                </paper-material>
-                <mat-divider></mat-divider>
-                <div class="layout horizontal">
-                    <div class="layout vertical flex-2">
-                        <paper-material class="card" style="margin-right:10px;">
-                            <h3>Bevétel</h3>
-                            <div class="layout horizontal">
-                                <div class="layout vertical">
-                                    <paper-item class="flex" style="text-align:center">Tényleges</paper-item>
-                                </div>
+        <div class="layout vertical flex">
+            <paper-tabs selected="{{tabSelected}}">
+                <paper-tab>
+                    Költségvetés áttekintése
+                </paper-tab>
+                <paper-tab>
+                    Költségvetés összefoglalása
+                </paper-tab>
+                <paper-tab>
+                    Aktuális grafikonok
+                </paper-tab>
+                <paper-tab>
+                    Aktuális költségvetés
+                </paper-tab>
+            </paper-tabs>
+            <iron-pages selected="[[tabSelected]]">
+                <section>
+                    <div class="layout vertical flex">
+                        <paper-material heading="Egyenleg" class="card">
+                            <h3>Egyenleg</h3>
+                            <div class="layout horizontal" style="margin:10px">
                                 <div class="layout vertical flex">
-                                    <span>1. bevétel:</span>
-                                    <span>2. bevétel:</span>
-                                    <span>Extra bevétel: </span>
-                                    <h4>Bevétel összesen:</h4>
+                                    <span>Tervezett egyenleg</span>
+                                    <span>Tényleges egyenleg</span>
+                                    <span>Különbség</span>
                                 </div>
-                                <div class="layout vertical">
-                                    <span align="right">- Ft</span>
-                                    <span align="right">- Ft</span>
-                                    <span align="right">- Ft</span>
-                                    <h4>  <span align="right">- Ft</span></h4>
-                                </div>
-                            </div>
 
-                            <mat-divider></mat-divider>
-
-                            <div class="layout horizontal">
-
-                                <div class="layout vertical">
-                                    <paper-item class="flex" style="text-align:center">Tervezett</paper-item>
-                                </div>
                                 <div class="layout vertical flex">
-                                    <span>1. bevétel:</span>
-                                    <span>2. bevétel:</span>
-                                    <span>Extra bevétel: </span>
-                                    <h4>Bevétel összesen:</h4>
-                                </div>
-                                <div class="layout vertical">
                                     <span align="right">- Ft</span>
                                     <span align="right">- Ft</span>
                                     <span align="right">- Ft</span>
-                                    <h4>  <span align="right">- Ft</span></h4>
-                                </div>
-
-                            </div>
-                        </paper-material>
-
-
-                    </div>
-                    <div class="layout vertical flex-1">
-                        <paper-material class="card" style="margin-left:0px;margin-right:0px;">
-                            <h3>Kiadás</h3>
-                            <div class="layout horizontal" style="height:139px">
-                                <div class="layout vertical">
-                                    <paper-item class="flex" style="text-align:center">Tényleges</paper-item>
-                                </div>
-                                <div class="layout vertical">
-                                    <paper-item class="flex">
-                                        <h4>- Ft</h4>
-                                    </paper-item>
-                                </div>
-                            </div>
-                            <mat-divider></mat-divider>
-                            <div class="layout horizontal" style="height:139px">
-                                <div class="layout vertical">
-                                    <paper-item class="flex" style="text-align:center">Tervezett</paper-item>
-                                </div>
-                                <div class="layout vertical">
-                                    <paper-item class="flex">
-                                        <h4>- Ft</h4>
-                                    </paper-item>
                                 </div>
                             </div>
                         </paper-material>
-
-                    </div>
-                </div>
-
-            </div>
-            <div class="layout vertical flex">
-                <h2>Költségvetés összefoglalása</h2>
-                <mat-divider></mat-divider>
-                <paper-material class="card layout vertical flex">
-                    <h3>Kategóriák</h3>
-                    <div class="layout vertical flex-1">
-                        <div class="layout horizontal" style="word-wrap:break;">
-                            <template is="dom-repeat" items="[[cathegories]]">
-                                <cathegory-element cathegory="[[item]]"></cathegory-element>
-                            </template>
-                        </div>
-                    </div>
-                    <mat-divider></mat-divider>
-                    <div class="flex-3">
-                        <me-table table-header=[[tableHeader]]></me-table>
+                        <mat-divider></mat-divider>
                         <div class="layout horizontal">
-                            <span class="flex">Végösszeg</span>
-                            <span class="flex">- Ft</span>
-                            <span class="flex">- Ft</span>
-                            <span class="flex">- Ft</span>
+                            <div class="layout vertical flex-2">
+                                <paper-material class="card" style="margin-right:10px;">
+                                    <h3>Bevétel</h3>
+                                    <div class="layout horizontal">
+                                        <div class="layout vertical">
+                                            <paper-item class="flex" style="text-align:center">Tényleges</paper-item>
+                                        </div>
+                                        <div class="layout vertical flex">
+                                            <span>1. bevétel:</span>
+                                            <span>2. bevétel:</span>
+                                            <span>Extra bevétel: </span>
+                                            <h4>Bevétel összesen:</h4>
+                                        </div>
+                                        <div class="layout vertical">
+                                            <span align="right">- Ft</span>
+                                            <span align="right">- Ft</span>
+                                            <span align="right">- Ft</span>
+                                            <h4>  <span align="right">- Ft</span></h4>
+                                        </div>
+                                    </div>
 
+                                    <mat-divider></mat-divider>
+
+                                    <div class="layout horizontal">
+
+                                        <div class="layout vertical">
+                                            <paper-item class="flex" style="text-align:center">Tervezett</paper-item>
+                                        </div>
+                                        <div class="layout vertical flex">
+                                            <span>1. bevétel:</span>
+                                            <span>2. bevétel:</span>
+                                            <span>Extra bevétel: </span>
+                                            <h4>Bevétel összesen:</h4>
+                                        </div>
+                                        <div class="layout vertical">
+                                            <span align="right">- Ft</span>
+                                            <span align="right">- Ft</span>
+                                            <span align="right">- Ft</span>
+                                            <h4>  <span align="right">- Ft</span></h4>
+                                        </div>
+
+                                    </div>
+                                </paper-material>
+
+
+                            </div>
+                            <div class="layout vertical flex-1">
+                                <paper-material class="card" style="margin-left:0px;">
+                                    <h3>Kiadás</h3>
+                                    <div class="layout horizontal" style="height:139px">
+                                        <div class="layout vertical">
+                                            <paper-item class="flex" style="text-align:center">Tényleges</paper-item>
+                                        </div>
+                                        <span class="flex"></span>
+                                        <div class="layout vertical">
+                                            <paper-item class="flex">
+                                                <h4 class="flex">- Ft</h4>
+                                            </paper-item>
+                                        </div>
+                                    </div>
+                                    <mat-divider></mat-divider>
+                                    <div class="layout horizontal" style="height:139px">
+                                        <div class="layout vertical">
+                                            <paper-item class="flex" style="text-align:center">Tervezett</paper-item>
+                                        </div>
+                                        <span class="flex"></span>
+                                        <div class="layout vertical">
+                                            <paper-item class="flex">
+                                                <h4>- Ft</h4>
+                                            </paper-item>
+                                        </div>
+                                    </div>
+                                </paper-material>
+
+                            </div>
                         </div>
                     </div>
-                </paper-material>
-            </div>
+                </section>
+                <section>
+                    <div class="layout vertical flex">
+                        <paper-material class="card layout vertical flex">
+                            <h3>Kategóriák</h3>
+                            <div class="layout vertical flex-1">
+                                <div class="layout horizontal" style="word-wrap:break;">
+                                    <template is="dom-repeat" items="[[cathegories]]">
+                                        <cathegory-element cathegory="[[item]]"></cathegory-element>
+                                    </template>
+                                </div>
+                            </div>
+                            <mat-divider></mat-divider>
+                            <div class="flex-3">
+                                <me-table table-header=[[tableHeader]]></me-table>
+                                <div class="layout horizontal">
+                                    <span class="flex">Végösszeg</span>
+                                    <span class="flex">- Ft</span>
+                                    <span class="flex">- Ft</span>
+                                    <span class="flex">- Ft</span>
+
+                                </div>
+                            </div>
+                        </paper-material>
+                    </div>
+                </section>
+                <section>3</section>
+                <section>4</section>
+            </iron-pages>
+
         </div>
-        <mat-divider></mat-divider>
 
     </template>
     <script>
@@ -145,6 +181,10 @@
                 is: 'dashboard-page',
                 behaviors: [I18N, MoreRouting, ToastBehavior, FabBehavior],
                 properties: {
+                    tabSelected: {
+                        type: Number,
+                        value: 0
+                    },
                     cathegory: {
                         type: Object,
                         value: {
