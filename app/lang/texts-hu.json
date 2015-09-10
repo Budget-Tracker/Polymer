@@ -1,0 +1,8 @@
+{
+    "LOGIN_TITLE": "Budget Tracker bejelentkezés",
+    "NAME": "Név",
+    "PASSWORD": "Jelszó",
+    "LOGIN": "Bejelentkezés",
+    "TEST": "Teszt paraméterekkel. a: {{a}} és b: {{b}}",
+    "STAY_LOGGED_IN": "Maradjak bejelentkezve"
+}

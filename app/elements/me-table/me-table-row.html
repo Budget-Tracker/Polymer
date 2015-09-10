@@ -1,0 +1,85 @@
+<dom-module id="me-table-row">
+    <link rel="import" type="css" href="me-table-global.css">
+    <style is="custom-style">
+        :host {
+            padding: 8px var(--outer-padding-size);
+            display: block;
+        }
+
+        :host:hover {
+            background-color: var(--app-background-color);
+            /*cursor: pointer;*/
+        }
+    </style>
+    <template><iron-signals on-iron-signal-cols-changed="colsChanged"></iron-signals><template is="dom-repeat" items="[[columns]]" as="column" index-as="i"><me-table-cell 
+                id="[[cellId(i)]]" index="[[i]]" cell-value="[[getVal(rowData, column)]]" type="[[column.type]]" on-button-click="buttonClick"></me-table-cell></template></template>
+</dom-module>
+<script>
+    (function () {
+        Polymer({
+            is: 'me-table-row',
+            properties: {
+                index: {
+                    type: Number
+                },
+                rowData: {
+                    type: Object
+                },
+                columns: {
+                    type: Array
+                }
+            },
+            listeners: {
+                click: 'handleClick'
+            },
+            attached: function () {
+                var parent = getParent(this);
+                this.set('columns', parent.get('shownCols'));
+                console.info('row attached', parent.get('colWidths'));
+            },
+            getVal: function (data, column) {
+                if (!column) {
+                    return JSON.stringify(data);
+                }
+
+                if (column.computed) {
+                    var params = [];
+                    for (var i in column.values) {
+                        params.push(data[column.values[i]]);
+                    }
+                    return column.computed(params);
+                }
+                return data[column.id];
+            },
+            handleClick: function (event) {
+                this.fire('row-click', {data: this.rowData, index: this.index});
+            },
+            cellId: function (id) {
+                return 'cell' + id;
+            },
+            buttonClick: function (event, details) {
+                console.log('btn click', details);
+                var cell = this.columns[details.colIndex];
+                var params = [];
+                for (var i in cell.actionValues) {
+                    params.push(this.rowData[cell.actionValues[i]]);
+                }
+                if (typeof cell.action === 'function') {
+                    cell.action(params);
+                }
+            },
+            colsChanged: function () {
+                var parent = getParent(this);
+                this.set('columns', parent.get('shownCols'));
+            }
+        });
+        function getParent(child) {
+            var parent = child.parentNode;
+            if (parent && parent.nodeName !== 'ME-TABLE') {
+                return getParent(parent);
+            } else {
+                return parent;
+            }
+        }
+    })();
+</script>

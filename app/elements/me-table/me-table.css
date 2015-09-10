@@ -1,0 +1,12 @@
+:host {
+    @apply(--layout-vertical);
+    @apply(--layout-flex);
+}
+
+.header {
+    background-color: var(--light-primary-color);
+    color: var(--primary-text-color);
+}
+.header.topBar {
+    padding: var(--outer-padding-size);
+}

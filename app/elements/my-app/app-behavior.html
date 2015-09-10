@@ -1,0 +1,127 @@
+<script>
+    var staticObject = {
+        titles: []
+    };
+    var serverAddress = "hunyady.homeip.net";
+    var serverPort = 3006;
+    var AppBehavior = {
+        getApp: function () {
+            return document.getElementById('app');
+        }, 
+        getApiVersion: function (version) {
+            if (version === undefined) {
+                return "v1";
+            } else {
+                return version;
+            }
+        },
+        getServerAddress:function(type, method, version) {
+            var url = "http://" + serverAddress + ":" + serverPort + "/" + this.getApiVersion(version) + "/" + type + "/" + method + "/";
+            console.log(url);
+            return url;
+        },
+        title: {
+            update: function (app) {
+                var title = staticObject.defaultTitle;
+                if (staticObject.titles.length > 0) {
+                    title = staticObject.titles[staticObject.titles.length - 1];
+                }
+                if (app === undefined) {
+                    app = document.getElementById('app');
+                }
+                app.set('appTitle', title);
+            },
+            setDefault: function (title) {
+                staticObject.defaultTitle = title;
+                this.update();
+            },
+            add: function (title) {
+                staticObject.titles.push(title);
+                this.update();
+            },
+            remove: function (title) {
+                var index = staticObject.titles.indexOf(title);
+                if (index > -1) {
+                    staticObject.titles.splice(index, 1);
+                }
+                this.update();
+            }
+        },
+        route: {
+            getRoute: function () {
+                var app = document.getElementById('app');
+                return app.route;
+            },
+            loadParameters: function (model) {
+                var app = document.getElementById('app');
+                var url = document.URL;
+                var root = window.location.protocol + '//' + window.location.host + window.location.pathname + '#!';
+                var index = url.indexOf(root);
+                if (index === 0) {
+                    var values = decodeURI(url.substring(root.length, url.length));
+                }
+                if (!values) {
+                    app.set('params', {});
+                    return {};
+                }
+                var parts = values.split('/');
+                parts.splice(0, 1);
+
+                if (!model) {
+                    var routes = MoreRouting.driver._activeRoutes;
+                    for (var i in routes) {
+//                        console.log(parts.length + ' ' + routes[i].depth + ' ' + MoreRouting.driver.prefix);
+                        if (routes[i].depth === parts.length) {
+                            model = routes[i].fullPath;
+                        }
+                    }
+                }
+
+//                console.log('model: ' + model);
+
+                if (!model) {
+                    app.set('params', {});
+                    return {};
+                }
+
+                var modelParts = model.split('/'); //MoreRouting.getRoute(model).compiled;
+                modelParts.splice(0, 1);
+//                console.log(MoreRouting.getRoute(model));
+//                console.log('model parts: ' + JSON.stringify(modelParts));
+//                console.log('parts:       ' + JSON.stringify(parts));
+
+                var params = {};
+
+                for (var i in modelParts) {
+//                    if (modelParts[i].type === 'param') {
+                    if (modelParts[i].indexOf(':') === 0) {
+                        params[modelParts[i].substring(1)] = parts[i];
+                    }
+                }
+
+                app.set('params', params);
+
+                return params;
+            }
+        },
+        headerIcons: {
+            init: function() {
+                staticObject.headerIcons = AppBehavior.getApp().$.headerIcons;
+            },
+            addIcon: function(icon, page) {
+                if (staticObject.headerIcons) {
+                    staticObject.headerIcons.addIcon(icon, page);
+                } else {
+                    console.error('Call AppBehavior.headerIcons.init()!');
+                }
+            },
+            removeIcon: function(iconId, page) {
+                if (staticObject.headerIcons) {
+                    staticObject.headerIcons.removeIcon(iconId, page);
+                } else {
+                    console.error('Call AppBehavior.headerIcons.init()!');
+                }
+            }
+        }
+    };
+</script>

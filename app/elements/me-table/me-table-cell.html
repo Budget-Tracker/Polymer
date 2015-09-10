@@ -1,0 +1,59 @@
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+
+<dom-module id="me-table-cell">
+    <link rel="import" type="css" href="me-table-global.css">
+    <style is="custom-style">
+        :host {
+            display: inline-block;
+            margin-right: 2px;
+            vertical-align: middle;
+        }
+/*        .center {
+            text-align: center;
+        }*/
+
+        paper-button {
+            font-size: 90%;
+            min-width: auto;
+        }
+        paper-button /deep/ .content.paper-button {
+            padding: 3px 6px;
+        }
+    </style>
+    <template><template is="dom-if" if="[[isNormal]]"><div class="cell">[[cellValue]]</div></template><template is="dom-if" 
+        if="[[isCheckBox]]"><div><paper-checkbox checked="[[cellValue]]" disabled></paper-checkbox></div></template><template is="dom-if" if="[[isButton]]"><paper-button 
+                class="default" on-click="click">[[cellValue]]</paper-button></template></template>
+</dom-module>
+<script>
+    (function () {
+        Polymer({
+            is: 'me-table-cell',
+            properties: {
+                cellValue: {
+                    type: String,
+                    observer: 'valueChanged'
+                },
+                type: {
+                    type: String,
+                    observer: 'typeChanged'
+                },
+                index: {
+                    type: Number
+                }
+            },
+            valueChanged: function (newVal, oldVal) {
+//                console.log('value', newVal);
+            },
+            typeChanged: function (newVal, oldVal) {
+//                console.log('type', newVal);
+                this.set('isNormal', newVal === 'normal');
+                this.set('isCheckBox', newVal === 'checkbox');
+                this.set('isButton', newVal === 'button');
+            },
+            click: function (event) {
+                this.fire('button-click', {colIndex: this.index});
+                event.stopPropagation();
+            }
+        });
+    })();
+</script>

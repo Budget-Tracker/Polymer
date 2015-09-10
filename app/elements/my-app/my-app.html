@@ -1,0 +1,303 @@
+<link rel="import" href="header-icons.html">
+
+<dom-module id="my-app">
+    <link rel="import" type="css" href="my-app.css">
+
+    <template>
+        <!--        <iron-localstorage name="my-app-user" value="{{user}}" on-iron-localstorage-load-empty="onEmptyUser" on-iron-localstorage-load="inLoadUser"></iron-localstorage>-->
+        <iron-signals on-iron-signal-more-route-change="routeChangedSignal"></iron-signals>
+        <!--<fab-element id="appFab" icon="attachment" click-fn="[[fabclick]]"></fab-element>-->
+        <dialog-container id="dialogContainer"></dialog-container>
+        <my-app-title default>PolyChrome App</my-app-title>
+
+        <paper-drawer-panel id="paperDrawerPanel" class="flex layout vertical" disable-swipe="[[plainPage]]" force-narrow="[[plainPage]]">
+            <div drawer class="flex layout vertical" hidden="[[plainPage]]">
+                <!-- Drawer Toolbar -->
+                <paper-toolbar id="drawerToolbar">
+
+                    <span style="padding-left:10px" class="menu-title">BudgetTracker</span>
+                </paper-toolbar>
+                <div id="menuContainer" class="flex">
+                    <more-route-selector>
+                        <!--Drawer Content-->
+                        <mat-list>
+
+                            <a route="dashboard" href="[[makeUrl('dashboard')]]">
+                                <div class="layout horizontal">
+                                    <mat-item selectable class="flex">
+                                        <iron-icon icon="social:poll" style=" margin:10px;margin-left:18px"></iron-icon>
+                                        <span>Dashboard</span>
+                                    </mat-item>
+                                </div>
+                            </a>
+
+                            <mat-sublist label="Előzmények" icon="notification:event-note" collapsible collapsed>
+                                <a route="history" href="[[makeUrl('history')]]">
+                                    <mat-item selectable label="Szeptember"></mat-item>
+                                </a>
+
+                            </mat-sublist>
+
+                </div>
+                </mat-list>
+                <!--hidden-->
+                <a route="login" hidden="true"></a>
+                <!--<a route="test" hidden="true"></a>-->
+                <a route="xy" hidden="true"></a>
+                </paper-menu>
+                </more-route-selector>
+            </div>
+            </div>
+            <div main>
+                <toast-container id="toast-container"></toast-container>
+                <fab-container id="fab-container"></fab-container>
+                <paper-header-panel mode="seamed" class="fullbleed layout vertical">
+                    <!-- Main Toolbar -->
+                    <paper-toolbar id="mainToolbar" hidden="[[plainPage]]">
+                        <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+
+                        <!-- Application name -->
+                        <!--<div class="app-name">PolyChrome App</div>-->
+                        <div class="app-name">[[appTitle]]</div>
+                        <span class="flex"></span>
+
+                        <!--Toolbar icons-->
+                        <!--                        <paper-icon-button icon="refresh"></paper-icon-button>
+                                                <paper-icon-button icon="social:person" on-click="logout"></paper-icon-button>-->
+                        <header-icons id="headerIcons" route="[[route]]"></header-icons>
+
+                    </paper-toolbar>
+
+                    <!-- Main Content -->
+                    <div class="content flex">
+                        <more-route-selector on-more-route-change="routeChanged">
+                            <!-- selected-params="{{params}}" -->
+                            <iron-pages attr-for-selected="route" selected="{{route}}">
+                                <div route="login">
+                                    <login-page page="login" current="[[route]]" user="{{user}}"></login-page>
+                                </div>
+
+                                <div route="home">
+                                    <fab-element id="refreshFab" icon="add" tooltip="Új tétel felvezetése" signal-name="dashboard-add" page="home"></fab-element>
+
+                                    <dashboard-page current="[[dashboard]]"></dashboard-page>
+                                </div>
+                                <div route="dashboard">
+                                    <fab-element id="refreshFab" icon="add" tooltip="Új tétel felvezetése" signal-name="dashboard-add" page="dashboard"></fab-element>
+
+                                    <dashboard-page current="[[dashboard]]"></dashboard-page>
+                                </div>
+
+                                <div route="history">
+                                    History
+                                </div>
+
+
+
+
+                            </iron-pages>
+                        </more-route-selector>
+                    </div>
+                </paper-header-panel>
+            </div>
+        </paper-drawer-panel>
+    </template>
+</dom-module>
+<script>
+    (function () {
+        Polymer({
+            is: 'my-app',
+            behaviors: [AppBehavior, ToastBehavior, FabBehavior, DialogBehavior, StorageBehavior],
+            properties: {
+                route: {
+                    type: String,
+                    value: 'home'
+                },
+                appTitle: {
+                    type: String
+                },
+                plainPage: {
+                    type: Boolean
+                },
+                user: {
+                    type: Object
+                },
+                fabclick: {
+                    type: Object,
+                    value: function () {
+                        return function () {
+                            ToastBehavior.addToast('my-app elején elhelyezett fab-element.');
+                        };
+                    }
+                },
+                homeFabClick: {
+                    type: Object,
+                    value: function () {
+                        return function () {
+                            DialogBehavior.showSpinnerDialog('Home fab', 'Türelem...');
+                            setTimeout(function () {
+                                DialogBehavior.hideSpinnerDialog();
+                            }, 3000);
+                        };
+                    }
+                },
+                contactFabClick: {
+                    type: Object,
+                    value: function () {
+                        return function () {
+                            DialogBehavior.showSpinnerDialog({
+                                title: 'Contact fab',
+                                text: 'JSON paraméterezés'
+                            });
+                            setTimeout(function () {
+                                DialogBehavior.hideSpinnerDialog();
+                            }, 3000);
+                        };
+                    }
+                },
+                isFruitsPage: {
+                    type: Boolean,
+                    computed: "isThisPage(route, 'fruits')"
+                },
+                isHomePage: {
+                    type: Boolean,
+                    computed: "isThisPage(route, 'home')"
+                },
+                testMenuParams: {
+                    type: Object,
+                    value: {
+                        a: 101,
+                        b: 203
+                    }
+                },
+                zParam: {
+                    type: Object,
+                    value: {
+                        z: 5
+                    }
+                },
+                paramsname: {
+                    type: String,
+                    computed: 'getElement(params.name)'
+                },
+                refreshIcon: {
+                    type: String,
+                    value: 'refresh'
+                },
+                refreshTap: {
+                    type: Object,
+                    value: function () {
+                        return function () {
+                            ToastBehavior.addToast('Refresh...');
+                        };
+                    }
+                }
+            },
+            observers:  ['userChanged(user.token)', 'userChanged(user.name)'],
+            ready: function () {
+                console.log('MyApp is ready.');
+                AppBehavior.title.update(this);
+                FabBehavior.setCurrentPage(this.route);
+
+                this.set('user.name', 'Nobody');
+
+                window.onhashchange = function (event) {
+                    AppBehavior.route.loadParameters(MoreRouting.getRoute(AppBehavior.route.getRoute()).fullPath);
+                };
+                var parameters = AppBehavior.route.loadParameters();
+                this.set('params', parameters);
+            },
+            attached: function () {
+                var self = this;
+                //                console.log('self.user', self.user, 'this.user', this.user);
+                StorageBehavior.sessionGet('user', function (user) {
+                    if (!user) {
+                        StorageBehavior.localGet('user', function (user) {
+                            //                            console.log('local user:', user);
+                            if (!user) {
+                                self.onEmptyUser();
+                            } else {
+                                //                                console.log('User load from local storage.', user);
+                                //                                self.set('user', user);
+                                self.onLoadUser(user);
+                            }
+                        });
+                    } else {
+                        //                        console.log('User load from session storage.', user);
+                        //                        self.set('user', user);
+                        self.onLoadUser(user);
+                    }
+                });
+
+                AppBehavior.headerIcons.init();
+                AppBehavior.headerIcons.addIcon({
+                    icon: 'star',
+                    id: 'test',
+                    action: function () {
+                        ToastBehavior.addToast('Sikerült : )')
+                    }
+                }, 'home');
+                //                AppBehavior.headerIcons.removeIcon('logout');
+                //                AppBehavior.headerIcons.removeIcon('test', 'home');
+            },
+            makeUrl: function (pathOrName, params) {
+                return MoreRouting.urlFor(pathOrName, params);
+            },
+            routeChanged: function (p1, p2) {
+                var drawerPanel = this.$.paperDrawerPanel;
+                if (drawerPanel.narrow) {
+                    drawerPanel.closeDrawer();
+                }
+                FabBehavior.setCurrentPage(this.route);
+
+                if (MoreRouting.isCurrentUrl('login')) {
+                    this.set('plainPage', true);
+                } else {
+                    this.set('plainPage', false);
+                }
+                console.log("lefutok", this.route);
+                this.fire('iron-signal', {
+                    name: this.route,
+                    data: null
+                });
+
+            },
+            isThisPage: function (route, page) {
+                return route === page;
+            },
+            userInfoUrl: function (name) {
+                return this.makeUrl('user-info', {
+                    name: name
+                });
+            },
+            goToUserInfo: function () {
+                MoreRouting.navigateTo('user-info', {
+                    name: this.userName
+                });
+            },
+            getElement: function (value) {
+                return value;
+            },
+            routeChangedSignal: function (data) {
+                console.log('routeChangedSignal: ' + JSON.stringify(data));
+            },
+            onEmptyUser: function (data) {
+                MoreRouting.navigateTo('login');
+            },
+            onLoadUser: function (data) {
+                this.set('user', data);
+            },
+            userChanged: function (val) {
+                //                console.log('userChanged', val, this.user, this.get('user'));
+                this.set('user', this.user);
+            },
+            logout: function () {
+                this.set('user', null);
+                MoreRouting.navigateTo('login');
+                StorageBehavior.sessionRemove('user');
+                StorageBehavior.localRemove('user');
+            },
+
+        });
+    })();
+</script>

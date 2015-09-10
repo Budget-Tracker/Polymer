@@ -1,0 +1,77 @@
+<dom-module id="cathegory-element">
+    <style is="custom-style">
+        :host {
+            @apply(--layout-horizontal);
+            display: inline-block;
+            display: block;
+            clear: both;
+        }
+        
+        .minicard {
+            width: 120px;
+            height: 40px;
+            background: var(--accent-color);
+            margin: 2px;
+        }
+    </style>
+    <template>
+        <paper-material class="minicard layout horizontal" style="overflow:visible">
+            <div on-tap="toggle">
+                <paper-item>[[cathegory.name]]</paper-item>
+                <span class="flex"></span>
+            </div>
+            <div>
+                <paper-icon-button icon="icons:close"></paper-icon-button>
+            </div>
+        </paper-material>
+    </template>
+    <script>
+        (function () {
+            Polymer({
+                is: 'cathegory-element',
+                behaviors: [I18N, MoreRouting, ToastBehavior, Polymer.NeonAnimationRunnerBehavior],
+                properties: {
+                    opened: {
+                        type: Boolean,
+                        value: false
+                    },
+                    cathegory: {
+                        type: Object
+                    },
+                    animationConfig: {
+                        value: function () {
+                            return {
+                                'entry': {
+                                    name: 'scale-up-animation',
+                                    node: this
+                                },
+                                'exit': {
+                                    name: 'fade-out-animation',
+                                    node: this
+                                }
+                            }
+                        }
+                    },
+                    listeners: {
+                        'neon-animation-finish': '_onNeonAnimationFinish'
+                    },
+                },
+                ready: function () {
+                    // console.log(this.cathegory);
+                },
+                toggle: function () {
+                    if (this.opened) {
+                        this.playAnimaton('exit');
+                        this.style.height = '40px';
+
+                    } else {
+                        this.playAnimaton('entry');
+                        this.style.height = '200px';
+                    }
+                    this.opened = !opened;
+                },
+                _onNeonAnimationFinish: function () {}
+            });
+        })();
+    </script>
+</dom-module>

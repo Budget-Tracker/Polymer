@@ -1,0 +1,11 @@
+<link rel="import" href="../bower_components/more-routing/more-routing.html">
+
+<more-routing-config driver="hash"></more-routing-config>
+
+<more-route name="login" path="/login"></more-route>
+<more-route name="home" path="/"></more-route>
+
+<more-route name="dashboard" path="/dashboard"></more-route>
+<more-route name="history" path="/history">
+    <more-route name="history-param" path="/:month"></more-route>
+</more-route>

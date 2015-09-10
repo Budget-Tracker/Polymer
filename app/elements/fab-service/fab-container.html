@@ -1,0 +1,86 @@
+<dom-module id="fab-container">
+    <style is="custom-style">
+        :host {
+            display: block;
+            position: absolute;
+            height: 100%;
+            width: 100%;
+        }
+        paper-fab.fab-left-bottom {
+            position: absolute;
+            bottom: 32px;
+            right: 52px;
+            z-index: 1;
+        }
+    </style>
+    <template>
+        <template is="dom-if" if="{{currentFab}}">
+            <paper-fab id="def" icon="{{currentFab.icon}}" class="fab-left-bottom" on-click="clickFab"></paper-fab>
+        </template>
+    </template>
+</dom-module>
+<script>
+    (function () {
+        Polymer({
+            is: 'fab-container',
+            behaviors: [MyUtils, FabBehavior],
+            properties: {
+                fabs: {
+                    type: Object,
+                    value: {}
+                },
+                fabList: {
+                    type: Array,
+                    value: []
+                },
+//                fabtooltip: {
+//                    type: String,
+//                    computed: 'getValue(currentFab.tooltip)'
+//                },
+                currentFab: Object
+            },
+            addFab: function (fab) {
+//                console.log('Add fab: ' + id);
+                if (this.fabList.indexOf(fab.id) > -1) {
+                    this.removeFab(fab.id);
+                }
+                this.currentFab = {
+                    icon: fab.icon
+                };
+                this.currentFab.onClick = function () {
+                    if (fab.signalName) {
+                        var app = document.getElementById('app');
+                        app.fire('iron-signal', {name: fab.signalName, data: fab.signalData});
+                    }
+                    if (fab.onClick) {
+                        fab.onClick();
+                    }
+                };
+                MyUtils.JSON.addElement(this.fabs, fab.id, this.currentFab);
+                this.fabList.push(fab.id);
+            },
+            removeFab: function (id) {
+                var index = this.fabList.indexOf(id);
+                if (index > -1) {
+                    this.fabList.splice(index, 1);
+                    MyUtils.JSON.removeElement(this.fabs, id);
+                }
+                index = this.fabList.length - 1;
+                if (index > -1) {
+                    this.currentFab = MyUtils.JSON.getElement(this.fabs, this.fabList[index]);
+                } else {
+                    this.currentFab = null;
+                }
+            },
+            clickFab: function () {
+                this.currentFab.onClick();
+            },
+            register: function () {
+                FabBehavior.setFabContainer(this);
+            },
+            getValue: function (value) {
+                return value;
+            }
+        });
+    })();
+</script>

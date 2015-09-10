@@ -1,0 +1,151 @@
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="me-table-row.html">
+<link rel="import" href="me-table-cell.html">
+
+<dom-module id="me-table">
+    <link rel="import" type="css" href="me-table-global.css">
+    <link rel="import" type="css" href="me-table.css">
+    <template>
+        <paper-header-panel class="layout flex">
+            <paper-toolbar id="header" class="header row"><template is="dom-repeat" items="[[shownCols]]" index-as="i"><span id="[[cellId(i)]]" class="cell">[[item.name]]</span></template></paper-toolbar>
+            <iron-list id="bodyList" items="[[tableData]]" as="data" index-as="index" class="flex">
+                <template>
+                    <div class="row">
+                        <me-table-row index="[[index]]" row-data="[[data]]"></me-table-row>
+                    </div>
+                </template>
+            </iron-list>
+        </paper-header-panel>
+    </template>
+</dom-module>
+<script>
+    (function () {
+        Polymer({
+            is: 'me-table',
+            properties: {
+                id: {
+                    type: String
+                },
+                tableHeader: {
+                    type: Array,
+                    observer: 'headerChanged'
+                },
+                tableData: {
+                    type: Array,
+                    observer: 'dataChanged'
+                },
+                colWidths: {
+                    type: Array,
+                    observer: 'setHeaderWidths'
+                }
+            },
+            behaviors: [Polymer.IronResizableBehavior],
+            listeners: {
+                'iron-resize': 'widthChanged'
+            },
+            ready: function () {
+                console.log('ready', this.tableHeader, this.tableData);
+            },
+            attached: function () {
+//                console.info('Table attached.');
+                this.widthChanged();
+            },
+            headerChanged: function (newVal, oldVal) {
+                console.debug('header', newVal);
+            },
+            dataChanged: function (newVal, oldVal) {
+                console.debug('data', newVal);
+                var self = this;
+                setTimeout(function () {
+                    self.widthChanged();
+                });
+            },
+            widthChanged: function () {
+                var outerPadding = parseInt(this._styleProperties['--outer-padding-size']);
+                var rightMargin = Math.max(getScrollBarWidth(), outerPadding);
+                var width = this.getBoundingClientRect().width - outerPadding - rightMargin;
+
+//                console.info('szélesség:', width, getScrollBarWidth(), outerPadding, rightMargin);
+
+                var shownCols = [];
+                var hiddenCols = [];
+
+                for (var i in this.tableHeader) {
+                    var hiddenWidth = parseInt(this.tableHeader[i].hide) || 0;
+                    console.log('widths:', this.tableHeader[i].hide, hiddenWidth, width, (hiddenWidth >= width));
+                    
+                    if (hiddenWidth >= width) {
+                        console.log('hidden:', this.tableHeader[i]);
+                        hiddenCols.push(this.tableHeader[i]);
+                    } else {
+                        shownCols.push(this.tableHeader[i]);
+                        console.log('shown:', this.tableHeader[i]);
+                    }
+                }
+
+                var percentColSum = 0;
+
+                for (var i in shownCols) {
+                    var w = shownCols[i].width;
+                    if (typeof w === 'string' && w.substring(w.length - 'px'.length) === 'px') {
+                        width -= parseInt(w);
+                    } else {
+                        percentColSum += w;
+                    }
+                }
+
+                var style = document.createElement('style');
+//                style.setAttribute('is', 'custom-style');
+//                style.addAttribute('shim-shadowdom');
+                style.textContent = '';
+                for (var i = 0; i < shownCols.length; i++) {
+                    var w = shownCols[i].width;
+                    var cw;
+                    if (typeof w === 'string' && w.substring(w.length - 'px'.length) === 'px') {
+                        cw = parseInt(w);
+                    } else {
+                        cw = Math.floor(width * w / percentColSum);
+                    }
+
+                    var styleStr = '#cell' + i + ' { width: ' + cw + 'px; } ';
+
+                    style.textContent += styleStr;
+                }
+                document.getElementsByTagName('head')[0].appendChild(style);
+                this.set('shownCols', shownCols);
+                this.fire('iron-signal', {name: 'cols-changed', data: null})
+                console.log('shownCols', shownCols);
+            },
+            cellId: function (id) {
+                return 'cell' + id;
+            }
+        });
+
+        function getScrollBarWidth() {
+            var inner = document.createElement('p');
+            inner.style.width = "100%";
+            inner.style.height = "200px";
+
+            var outer = document.createElement('div');
+            outer.style.position = "absolute";
+            outer.style.top = "0px";
+            outer.style.left = "0px";
+            outer.style.visibility = "hidden";
+            outer.style.width = "200px";
+            outer.style.height = "150px";
+            outer.style.overflow = "hidden";
+            outer.appendChild(inner);
+
+            document.body.appendChild(outer);
+            var w1 = inner.offsetWidth;
+            outer.style.overflow = 'scroll';
+            var w2 = inner.offsetWidth;
+            if (w1 == w2)
+                w2 = outer.clientWidth;
+
+            document.body.removeChild(outer);
+
+            return (w1 - w2);
+        }
+    })();
+</script>

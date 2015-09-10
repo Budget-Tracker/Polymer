@@ -1,0 +1,16 @@
+:host {
+    --outer-padding-size: 16px;
+}
+
+.row {
+    white-space: nowrap;
+    border-bottom: 1px solid var(--divider-color);
+}
+
+.cell {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    word-wrap: break-word;
+    white-space: normal;
+}
