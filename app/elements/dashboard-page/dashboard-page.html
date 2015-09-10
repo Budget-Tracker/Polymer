@@ -144,8 +144,9 @@
                     </div>
                 </section>
                 <section>
-                    <div class="layout vertical flex">
-                        <paper-material class="card layout vertical flex">
+
+                    <div id="pageContainer" class="layout vertical fit" style="margin-top:60px">
+                        <paper-material elevation="1" class="card layout vertical">
                             <h3>Kategóriák</h3>
                             <div class="layout vertical flex-1">
                                 <div class="layout horizontal" style="word-wrap:break;">
@@ -154,15 +155,16 @@
                                     </template>
                                 </div>
                             </div>
-                            <mat-divider></mat-divider>
-                            <div class="flex-3">
-                                <me-table table-header=[[tableHeader]]></me-table>
+                        </paper-material>
+                        <paper-material elevation="1" class="card flex" id="resultCard">
+                            <me-table table-header=[[tableHeader]]></me-table>
+                            <div class="layout vertical">
+                                <div class="flex"></div>
                                 <div class="layout horizontal">
-                                    <span class="flex">Végösszeg</span>
+                                    <span class="flex"> Végösszeg</span>
                                     <span class="flex">- Ft</span>
                                     <span class="flex">- Ft</span>
                                     <span class="flex">- Ft</span>
-
                                 </div>
                             </div>
                         </paper-material>
