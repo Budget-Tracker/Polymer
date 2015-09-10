@@ -26,21 +26,27 @@
                 color: var(--text-primary-color);
             }
         }
+        
+        @media screen and (max-width: 1000px) {
+            #container {
+                @apply(--layout-vertical);
+            }
+        }
     </style>
     <template>
         <iron-signals on-iron-signal-dashboard-add="onFabClicked"></iron-signals>
         <div class="layout vertical flex">
-            <paper-tabs selected="{{tabSelected}}">
-                <paper-tab>
+            <paper-tabs selected="{{tabSelected}}" scrollable class="flex">
+                <paper-tab class="flex">
                     Költségvetés áttekintése
                 </paper-tab>
-                <paper-tab>
+                <paper-tab class="flex">
                     Költségvetés összefoglalása
                 </paper-tab>
-                <paper-tab>
+                <paper-tab class="flex">
                     Aktuális grafikonok
                 </paper-tab>
-                <paper-tab>
+                <paper-tab class="flex">
                     Aktuális költségvetés
                 </paper-tab>
             </paper-tabs>
@@ -64,7 +70,7 @@
                             </div>
                         </paper-material>
                         <mat-divider></mat-divider>
-                        <div class="layout horizontal">
+                        <div id="container" class="layout horizontal">
                             <div class="layout vertical flex-2">
                                 <paper-material class="card" style="margin-right:10px;">
                                     <h3>Bevétel</h3>
@@ -112,7 +118,7 @@
 
                             </div>
                             <div class="layout vertical flex-1">
-                                <paper-material class="card" style="margin-left:0px;">
+                                <paper-material class="card">
                                     <h3>Kiadás</h3>
                                     <div class="layout horizontal" style="height:139px">
                                         <div class="layout vertical">
